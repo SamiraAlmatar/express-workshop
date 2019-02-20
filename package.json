@@ -17,6 +17,9 @@
   },
   "homepage": "https://github.com/SamiraAlmatar/express-workshop#readme",
   "dependencies": {
-    "express": "^4.16.4"
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4",
+    "express-formidable": "^1.2.0",
+    "fs-promise": "^2.0.3"
   }
 }

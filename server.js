@@ -1,23 +1,38 @@
 const express = require("express");
+const bodyParser = require("body-parser");
+const formidable = require("express-formidable");
+const fs = require('fs-promise');
 //initialise the server
 const app = express();
 
-//handle request to the homepage
-app.get('/', (req,res) =>{
-    // console.log(req);
-    res.send('Hello!, this is the homepage');
+//middleware to send static files
+app.use(express.static('public'));
+
+//middleware to read request body of formdata
+app.use(formidable());
+
+//read from system file 
+// fs.readFile(__dirname + '/data/posts.json', (error, file) =>{
+//     // const pasridFile = JSON.parse(file);
+//     console.log(file.toString());
+// });
+//handle request to create-post
+app.post('/create-post', (req,res) =>{
+    //hold the post to save 
+    let post = req.body;
+   //save the post in posts.json file 
+   fs.readFile('./data/posts.json')
+     .then(file => JSON.parse(file))
+    //  .then(array => [...array, post]) // put the post in the array
+     .then(newPost => fs.writeFile('./data/posts.json', JSON.stringify(post)))
+     .then(() => res.send(200))
+     .catch(err => res.send(err.toString()));
+//    console.log(req.fields);
+  
 });
-//handle request to json data
-app.get('/api', (req,res) =>{
-    res.send({hello : 'word'});
-});
-//handle request to html data
-app.get('/html', (req,res) =>{
-    res.send('<h3>Hello!, here is Html respone</h3>');
-});
-//handle request to date
-app.get('/date', (req,res) =>{
-    res.send(new Date().toDateString());
+app.get('/create-post', (req,res) =>{
+    fs.readFile('./data/posts.json')
+    .then(posts => res.send(posts));
 });
 
 //set server port
