@@ -11,22 +11,20 @@ app.use(express.static('public'));
 //middleware to read request body of formdata
 app.use(formidable());
 
-//read from system file 
-// fs.readFile(__dirname + '/data/posts.json', (error, file) =>{
-//     // const pasridFile = JSON.parse(file);
-//     console.log(file.toString());
-// });
 //handle request to create-post
 app.post('/create-post', (req,res) =>{
     //hold the post to save 
-    let post = req.body;
+    let post = req.fields;
    //save the post in posts.json file 
    fs.readFile('./data/posts.json')
      .then(file => JSON.parse(file))
-    //  .then(array => [...array, post]) // put the post in the array
-     .then(newPost => fs.writeFile('./data/posts.json', JSON.stringify(post)))
+    //  .then(array => post.push(array)) // put the post in the array
+     .then(obj => Object.assign(obj, {
+         [Date.now()]: post.blogpost
+     }))
+     .then(newPost => fs.writeFile('./data/posts.json', JSON.stringify(newPost)))
      .then(() => res.send(200))
-     .catch(err => res.send(err.toString()));
+     .catch(error => res.send(error.toString()));
 //    console.log(req.fields);
   
 });
@@ -36,7 +34,7 @@ app.get('/create-post', (req,res) =>{
 });
 
 //set server port
-app.listen(8080, ()=>{
+app.listen(8000, ()=>{
     //to do once the server is running
     console.log('the server is running and use port 8080');
 });
